@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config()
 const cardRoutes = require('./routes/cardRoutes');
-
+const cardMiddleWare = require('./middleware/cardMiddleWare');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -14,6 +14,9 @@ const MONGO_URL = process.env.MONGO_URL;
 app.use(express.json());
 
 app.use('/api/cards', cardRoutes);
+// error middleware
+app.use(cardMiddleWare);
+
 
 
 
