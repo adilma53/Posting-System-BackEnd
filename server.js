@@ -2,28 +2,33 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config()
 const cardRoutes = require('./routes/cardRoutes');
-const cardMiddleWare = require('./middleware/cardMiddleWare');
+const errorMiddleware = require('./middleware/cardMiddleWare');
 var cors = require('cors')
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URL;
+const FRONTEND = process.env.FRONTEND;
 
-
+var corsOptions = {
+  origin: FRONTEND,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 
 // make the server understand JSON (its a middleware)
 app.use(express.json());
+// error middleware
+app.use(express.urlencoded({ extended: false }))
+
+// use the rror middleware we set up
+app.use(errorMiddleware);
+
 
 app.use('/api/cards', cardRoutes);
-// error middleware
-app.use(cardMiddleWare);
-
-//cors middleware
-app.use(cors())
 
 
-
-
+mongoose.set("strictQuery", false);
 
 // connect to mongodb
 mongoose.
