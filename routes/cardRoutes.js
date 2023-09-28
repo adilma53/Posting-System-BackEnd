@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/addcard", addCard);
 
 // get all data from the server (fetch all cards)
-router.get("https://posting-system-backend.onrender.com/", getAllCards);
+router.get("/", getAllCards);
 
 // get specific data from the server using id (fetch card by id)
 router.get("/:id", getSingleCard);
