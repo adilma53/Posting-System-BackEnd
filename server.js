@@ -1,42 +1,67 @@
-const express = require("express");
-const mongoose = require("mongoose");
+// Load environment variables from a .env file into process.env
 require("dotenv").config();
-const cardRoutes = require("./routes/cardRoutes");
-const errorMiddleware = require("./middleware/cardMiddleWare");
-var cors = require("cors");
 
+// Import necessary libraries and modules
+const express = require("express"); // Express.js web framework
+const mongoose = require("mongoose"); // MongoDB driver
+const proudctRoute = require("./routes/productRoute"); // Custom product route module
+const errorMiddleware = require("./middleware/errorMiddleware"); // Custom error handling middleware
+var cors = require("cors"); // CORS (Cross-Origin Resource Sharing) middleware
+
+// Create an instance of the Express application
 const app = express();
+
+// Set the port for the application to listen on, with a default of 3000
 const PORT = process.env.PORT || 3000;
+
+// Get MongoDB connection URL and frontend URL from environment variables
 const MONGO_URL = process.env.MONGO_URL;
 const FRONTEND = process.env.FRONTEND;
 
+// Configure CORS options
 var corsOptions = {
-  origin: FRONTEND,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: FRONTEND, // Allow requests only from the specified frontend
+  optionsSuccessStatus: 200, // Set the success status for CORS options
 };
+
+// Enable CORS for the Express app using the configured options
 app.use(cors(corsOptions));
 
-// make the server understand JSON (its a middleware)
+// Parse incoming JSON requests
 app.use(express.json());
-// error middleware
+
+// Parse incoming form data
 app.use(express.urlencoded({ extended: false }));
 
-// use the error middleware we set up
+// Use the "proudctRoute" for handling requests under the "/api/cards" route
+app.use("/api/cards", proudctRoute);
+
+// Define a route for the root URL that sends a "Hello NODE API" message
+app.get("/", (req, res) => {
+  res.send("Hello NODE API");
+});
+
+// Define a route for the "/blog" URL that sends a "Hello Blog, My name is Devtamin" message
+app.get("/blog", (req, res) => {
+  res.send("Hello Blog, My name is Devtamin");
+});
+
+// Use the custom error handling middleware
 app.use(errorMiddleware);
 
-app.use("/api/cards", cardRoutes);
-
+// Configure Mongoose to allow flexible querying
 mongoose.set("strictQuery", false);
 
-// connect to mongodb
+// Connect to the MongoDB database using the provided URL
 mongoose
   .connect(MONGO_URL)
   .then(() => {
-    console.log("connected to MongoDB");
+    console.log("Connected to MongoDB"); // Log a successful connection
+    // Start the Express app and listen on the specified port
     app.listen(PORT, () => {
-      console.log(`ADIL Node API app is running on port ${PORT}`);
+      console.log(`Node API app is running on port ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log(error);
+    console.log(error); // Log any errors that occur during database connection
   });
