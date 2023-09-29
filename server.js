@@ -20,7 +20,7 @@ const FRONTEND = process.env.FRONTEND;
 
 // Configure CORS options
 var corsOptions = {
-  origin: "*", // Allow requests only from the specified frontend
+  origin: FRONTEND, // Allow requests only from the specified frontend
   optionsSuccessStatus: 200, // Set the success status for CORS options
 };
 
